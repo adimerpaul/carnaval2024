@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map">
+    <div style="position: absolute; top: 10px; left: 50px; z-index: 1000;">
+        Velocidad del marcador 1: <input type="number" id="speed1" value="1" min="0.1" step="0.1" onchange="changeSpeed('speed1')">
+        Index1 <input type="number" id="index1" value="0" min="0" step="1" onchange="changeIndex('index1')">
+        <br>
+        Velocidad del marcador 2: <input type="number" id="speed2" value="0.5" min="0.1" step="0.1" onchange="changeSpeed('speed2')">
+        Index2 <input type="number" id="index2" value="0" min="0" step="1" onchange="changeIndex('index2')">
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var speed1 = document.getElementById('speed1').value;
+    var index1 = document.getElementById('index1').value;
+    var speed2 = document.getElementById('speed2').value;
+    var index2 = document.getElementById('index2').value;
+    function changeIndex(textboxId) {
+        index1 = document.getElementById(textboxId).value;
+        console.log(index1);
+    }
+    function changeSpeed(textboxId) {
+        speed1 = document.getElementById(textboxId).value;
+        console.log(speed1);
+    }
+    var oruroLatLng = [-17.966, -67.11];
+    var map = L.map('map').setView(oruroLatLng, 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Coordenadas proporcionadas
+    var coordinates = [
+        [-17.958944551360883, -67.1063865656716],
+        [-17.959361924358685, -67.10621213063726],
+        [-17.95979081411732, -67.10607268679236],
+        [-17.960229914458722, -67.10596005907149],
+        [-17.960675596242925, -67.10594115788957],
+        [-17.961119456087815, -67.1059947626934],
+        [-17.96156840100902, -67.10603776991606],
+        [-17.96201770845455, -67.1060860389393],
+        [-17.96245631371623, -67.10620945635077],
+        [-17.962889946430252, -67.10634361333734],
+        [-17.96331372190538, -67.10648842040705],
+        [-17.963752584108157, -67.1066010075582],
+        [-17.964191227024976, -67.10671909276878],
+        [-17.96462521074912, -67.10684781016406],
+        [-17.96506903829549, -67.10692287025354],
+        [-17.96548259722565, -67.10709985667206],
+        [-17.965926789072512, -67.10719103149371],
+        [-17.96634483621263, -67.10737354580226],
+        [-17.966783738442334, -67.10748609596344],
+        [-17.967233032627533, -67.10753972821148],
+        [-17.96765679768704, -67.10768989850598],
+        [-17.968090772899348, -67.10781325267645],
+        [-17.9685298526175, -67.10792588039732],
+        [-17.968967353561286, -67.10803875988894],
+        [-17.969401311567772, -67.1081728440887],
+        [-17.96984038802877, -67.1082908350344],
+        [-17.970274357877123, -67.10839809953046],
+        [-17.970713432168093, -67.10847854790251],
+        [-17.971142294375476, -67.1086126285226],
+        [-17.97157115554161, -67.10875743559228],
+        [-17.971611999407873, -67.109229399375],
+        [-17.971453729373447, -67.1096745470337],
+        [-17.971335368838037, -67.11013073854018],
+        [-17.97122308157441, -67.11058665560462],
+        [-17.971110855779546, -67.11104266693394],
+        [-17.97098321270936, -67.11149854581515],
+        [-17.970840258627188, -67.11194369347385],
+        [-17.97068752139513, -67.11238391701501],
+        [-17.97061597431671, -67.11285049609484],
+        [-17.970416859256648, -67.1132795540791],
+        [-17.970309643362132, -67.11374079141221],
+        [-17.97017689978351, -67.11419666552051],
+        [-17.969738050740084, -67.11427746589432],
+        [-17.96932487940682, -67.11410040549578],
+        [-17.969166607323213, -67.11454555315444],
+        [-17.969074785663256, -67.11500687639986],
+        [-17.969513899300726, -67.11511419339789],
+        [-17.969947869951138, -67.11524827401797],
+        [-17.969789427790516, -67.11569352190767],
+        [-17.96965672578047, -67.11614417359186],
+        [-17.96950355953787, -67.11658395802576],
+        [-17.96939123754222, -67.11704519535886],
+        [-17.969217648862998, -67.11748497979275],
+        [-17.968967789941708, -67.11787692357161],
+        [-17.96854913359803, -67.11769457392832],
+        [-17.96810512177793, -67.1177857547161],
+        [-17.96772261936159, -67.11803791219414],
+        [-17.9673039600672, -67.11787701545005],
+        [-17.967125263724835, -67.11831143665913],
+        [-17.967385756062253, -67.11869766879114],
+        [-17.967569557740767, -67.11913209000024],
+    ];
+
+    // Interpolación de puntos
+    var interpolatedCoordinates = [];
+    for (var i = 0; i < coordinates.length - 1; i++) {
+        var p1 = coordinates[i];
+        var p2 = coordinates[i + 1];
+
+        interpolatedCoordinates.push(p1);
+
+        for (var j = 1; j <= 50; j++) {
+            var fraction = j / 50.0;
+            var lat = p1[0] + fraction * (p2[0] - p1[0]);
+            var lng = p1[1] + fraction * (p2[1] - p1[1]);
+            interpolatedCoordinates.push([lat, lng]);
+        }
+    }
+    interpolatedCoordinates.push(coordinates[coordinates.length - 1]);
+
+    // Crear una polilínea con las coordenadas interpoladas
+    var polyline = L.polyline(interpolatedCoordinates, { color: 'red' }).addTo(map);
+
+    // Crear marcadores
+    var marker1 = L.marker(interpolatedCoordinates[0],{draggable: true,icon: L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]})}).addTo(map);
+    var marker2 = L.marker(interpolatedCoordinates[0],{draggable: true,icon: L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]})}).addTo(map);
+    marker1.on('dragend', function (event) {
+        var marker = event.target;
+        var position = marker.getLatLng();
+
+        // Encontrar la posición más cercana en la línea
+        var closestIndex = findClosestLatLngIndex(position, interpolatedCoordinates);
+        document.getElementById('index1').value = closestIndex;
+        console.log('closestIndex: '+closestIndex);
+
+        // Mover el marcador a la posición más cercana
+        // marker.setLatLng(interpolatedCoordinates[closestIndex]);
+        //
+        // // Reiniciar el movimiento desde la posición más cercana
+        // moveMarker(marker, closestIndex);
+    });
+
+    function findClosestLatLngIndex(targetLatLng, latLngArray) {
+        var minDistance = Infinity;
+        var closestIndex = 0;
+
+        for (var i = 0; i < latLngArray.length; i++) {
+            var distance = map.distance(targetLatLng, latLngArray[i]);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        }
+
+        return closestIndex;
+    }
+
+    // Función para mover el marcador a la siguiente posición
+    function moveMarker(marker) {
+        let index = parseInt(document.getElementById('index1').value);
+        if (index < interpolatedCoordinates.length - 1) {
+            var currentLatLng = interpolatedCoordinates[index];
+            var nextLatLng = interpolatedCoordinates[index + 1];
+            var distance = map.distance(currentLatLng, nextLatLng);
+
+            let speed = speed1;
+
+            var duration = (distance / speed) * 1000; // Duración en milisegundos
+
+            marker.setLatLng(nextLatLng);
+            index++;
+            document.getElementById('index1').value = index;
+            console.log('speed1: '+speed1+' index: '+index);
+            setTimeout(function() {
+                moveMarker(marker);
+            }, duration);
+        }
+    }
+
+    // Iniciar el movimiento de los marcadores
+    moveMarker(marker1);
+
+</script>
+
+</body>
+</html>

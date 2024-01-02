@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map">
+    <div style="position: absolute; top: 10px; left: 50px; z-index: 1000;">
+        <button onclick="markers.pop().remove();markersArray.pop();">Eliminar marcador</button>
+    </div>
+    <div style="position: absolute; top: 10px; left: 250px; z-index: 1000;font-size: 20px;font-weight: bold;color: red;">
+        <label id="distance">Distancia: </label>
+    </div>
+    <div style="position: absolute; top: 10px; left: 450px; z-index: 1000;">
+        <button onclick="mostrarMarkers()">Mostrar marcadores</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    mostrarMarkers = function () {
+        console.log(markersArray);
+    }
+    var oruroLatLng = [-17.966, -67.11];
+    var distanceLabel = document.getElementById('distance');
+    var map = L.map('map').setView(oruroLatLng, 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var markers = [];
+    var markersArray = [];
+
+    map.on('click', function (e) {
+        if (markers.length > 0) {
+            var lastMarker = markers[markers.length - 1];
+            var distance = lastMarker.getLatLng().distanceTo(e.latlng);
+            console.log('Distancia: ' + distance);
+            distanceLabel.innerHTML = 'Distancia: ' + distance;
+            if (parseFloat(distance) > 49.5 && parseFloat(distance) < 50.5) {
+                var marker = L.marker(e.latlng).addTo(map);
+                marker.bindPopup('Latitud: ' + e.latlng.lat + '<br>Longitud: ' + e.latlng.lng).openPopup();
+                markers.push(marker);
+                arrayPoint=[e.latlng.lat,e.latlng.lng];
+                console.log(arrayPoint);
+                markersArray.push(arrayPoint);
+            } else {
+                console.log('No se puede agregar el marcador');
+            }
+        } else {
+            var marker = L.marker(e.latlng).addTo(map);
+            marker.bindPopup('Latitud: ' + e.latlng.lat + '<br>Longitud: ' + e.latlng.lng).openPopup();
+            markers.push(marker);
+            arrayPoint=[e.latlng.lat,e.latlng.lng];
+            markersArray.push(arrayPoint);
+        }
+    });
+
+</script>
+
+</body>
+</html>
