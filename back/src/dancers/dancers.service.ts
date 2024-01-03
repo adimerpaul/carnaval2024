@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDancerDto } from './dto/create-dancer.dto';
 import { UpdateDancerDto } from './dto/update-dancer.dto';
+import {Dancer} from "./entities/dancer.entity";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
 
 @Injectable()
 export class DancersService {
+  constructor(
+      @InjectRepository(Dancer)
+      private readonly dancersRepository: Repository<Dancer>,
+  ) {}
   create(createDancerDto: CreateDancerDto) {
     return 'This action adds a new dancer';
   }
 
-  findAll() {
-    return `This action returns all dancers`;
+  async findAll() {
+    return await this.dancersRepository.find({});
   }
 
   findOne(id: number) {
