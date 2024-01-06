@@ -15,6 +15,7 @@
         :lat-lng="[dancer.latitud, dancer.longitud]"
         style="background: red"
         :key="dancer.id"
+        @click="showDance(dancer)"
       >
         <l-icon
           :icon-url="'data:image/png;base64,' + dancer.image"
@@ -45,6 +46,52 @@
 <!--        />-->
       </l-control>
     </l-map>
+    <q-dialog v-model="dialogDancer">
+      <q-card class="q-pa-md">
+        <q-card-section class="row items-center q-pa-none q-ma-none">
+          <q-avatar size="50px">
+            <img :src="'data:image/png;base64,' + dancer.image" />
+          </q-avatar>
+          <div class="q-ml-md">
+            <div>{{ dancer.name }}</div>
+          </div>
+        </q-card-section>
+        <q-card-section class="q-pa-none">
+          <q-item>
+            <q-item-section>
+              <q-item-label>
+                <iframe
+                  width="100%"
+                  height="200"
+                  src="https://www.youtube.com/embed/W4s7d_4Erwo?"
+                  title="SPOT CARNAVAL DE ORURO 2024"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                ></iframe>
+                <div class="text-caption text-capitalize">
+                  {{ dancer.description}}
+                </div>
+              </q-item-label>
+            </q-item-section>
+<!--            <q-item-section side>-->
+<!--              <q-item-label>{{ dancer.velocity }} m/s</q-item-label>-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
+<!--          <q-item>-->
+<!--            <q-item-section>-->
+<!--              <q-item-label>Posición</q-item-label>-->
+<!--            </q-item-section>-->
+<!--            <q-item-section side>-->
+<!--              <q-item-label>{{ dancer.position }} m</q-item-label>-->
+<!--            </q-item-section>-->
+          </q-item>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat color="primary" label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -85,16 +132,22 @@ export default {
       visibleMap: true,
       zoom: 15,
       url,
+      dialogDancer: false,
       dancers: [],
+      dancer: {},
       polyline: {
         opacity: 0.5,
         weight: 10,
         latlngs: dataLine,
         color: 'orange'
       },
+      showDance (dancer) {
+        this.dancer = dancer
+        this.dialogDancer = true
+      },
       moveMarker (dancer) {
         const currentPosition = dancer.position
-        console.log('currentPosition', currentPosition)
+        // console.log('currentPosition', currentPosition)
         const nextLatLng = dataLine[currentPosition + 1]
         if (nextLatLng) {
           dancer.latitud = nextLatLng[0]
