@@ -5,17 +5,28 @@
     <title>Title</title>
 </head>
 <body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<div id="videoContainer">
+    <iframe id="video" width="153" height="273" src="https://www.youtube.com/embed/33qlISNE9Ww?autoplay=1&enablejsapi=1&controls=0" title="Nueva imagen, mismo sabor." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    const socket = io('http://localhost:3000');
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('video', {
+            events: {
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
 
-    // Escuchar eventos
-    socket.on('message', (data) => {
-        console.log('Mensaje recibido:', data);
-    });
-
-    // Emitir un mensaje al servidor
-    socket.emit('message', 'Hola, servidor!');
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+            document.getElementById('videoContainer').style.display = 'none';
+            console.log('video ended');
+        }
+    }
 </script>
+
 </body>
 </html>

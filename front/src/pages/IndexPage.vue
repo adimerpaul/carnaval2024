@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <l-map ref="map" v-model:zoom="zoom" :center="[-17.969, -67.112]" :use-global-leaflet="false" style="height: calc(100vh - 107px)" :max-zoom="17" :min-zoom="12">
+    <l-map v-model:zoom="zoom" :center="[-17.969, -67.112]" :use-global-leaflet="false" style="height: calc(100vh - 107px)" :min-zoom="12">
       <l-tile-layer
         v-for="tileProvider in tileProviders"
         :key="tileProvider.name"
@@ -10,9 +10,19 @@
         :attribution="tileProvider.attribution"
         layer-type="base"
       />
+      <l-marker
+        :lat-lng="[-17.969, -67.112]"
+        style="background: red"
+      >
+        <l-icon
+          :icon-url="url+'/uploads/incas.png'"
+          :icon-size="[40, 40]"
+          :icon-anchor="[16, 40]"
+        />
+      </l-marker>
       <l-control-layers
         position="topright"
-        :collapsed="false"
+        :collapsed="true"
         :sort-layers="true"
       />
       <l-polyline
@@ -38,36 +48,41 @@
 
 <script>
 import 'leaflet/dist/leaflet.css'
-import { LMap, LTileLayer, LControl, LControlLayers, LPolyline } from '@vue-leaflet/vue-leaflet'
+import { LMap, LTileLayer, LControl, LControlLayers, LPolyline, LMarker, LIcon } from '@vue-leaflet/vue-leaflet'
 import dataLine from 'src/pages/line.json'
 const tileProviders = [
   {
     name: 'Mapa',
     visible: true,
-    url: 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'
+    url: 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps'
   },
   {
     name: 'Satelite',
     visible: false,
-    url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+    url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps'
   }
 ]
 import { io } from 'socket.io-client'
 import { api, url } from 'boot/axios'
 export default {
   components: {
+    LIcon,
     LMap,
     LTileLayer,
     LControl,
     LControlLayers,
-    LPolyline
+    LPolyline,
+    LMarker
   },
   data () {
     return {
-      socket: io('http://localhost:3000'),
+      socket: io(url),
       tileProviders,
       visibleMap: true,
       zoom: 15,
+      url,
       dancers: [],
       polyline: {
         opacity: 0.5,
@@ -78,7 +93,7 @@ export default {
     }
   },
   mounted () {
-    // console.log(dataLine)
+    console.log(url + 'uploads/incas.png')
     api.get('dancers').then((res) => {
       this.dancers = res.data
       console.log(this.dancers)
