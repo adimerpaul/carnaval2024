@@ -5,7 +5,6 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import { UsersModule } from './users/users.module';
 import {ConfigModule} from "@nestjs/config";
 import { DancersModule } from './dancers/dancers.module';
-
 @Module({
     imports: [
         ConfigModule.forRoot(),

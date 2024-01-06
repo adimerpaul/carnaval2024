@@ -16,7 +16,7 @@ export class DancersService {
   }
 
   async findAll() {
-    return await this.dancersRepository.find({});
+    return await this.dancersRepository.find({order:{id:"ASC"}});
   }
 
   findOne(id: number) {
