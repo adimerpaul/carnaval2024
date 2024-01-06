@@ -11,11 +11,13 @@
         layer-type="base"
       />
       <l-marker
-        :lat-lng="[-17.969, -67.112]"
+        v-for="dancer in dancers"
+        :lat-lng="[dancer.latitud, dancer.longitud]"
         style="background: red"
+        :key="dancer.id"
       >
         <l-icon
-          :icon-url="url+'/uploads/incas.png'"
+          :icon-url="'data:image/png;base64,' + dancer.image"
           :icon-size="[40, 40]"
           :icon-anchor="[16, 40]"
         />
@@ -88,18 +90,40 @@ export default {
         opacity: 0.5,
         weight: 10,
         latlngs: dataLine,
-        color: 'green'
+        color: 'orange'
+      },
+      moveMarker (dancer) {
+        const currentPosition = dancer.position
+        console.log('currentPosition', currentPosition)
+        const nextLatLng = dataLine[currentPosition + 1]
+        if (nextLatLng) {
+          dancer.latitud = nextLatLng[0]
+          dancer.longitud = nextLatLng[1]
+          dancer.position += 1
+
+          // Llama a moveMarker recursivamente después de la duración calculada
+          setTimeout(() => {
+            this.moveMarker(dancer)
+          }, (1 / parseFloat(dancer.velocity)) * 1000)
+        }
       }
     }
   },
-  mounted () {
-    console.log(url + 'uploads/incas.png')
-    api.get('dancers').then((res) => {
+  async mounted () {
+    await api.get('dancers').then((res) => {
       this.dancers = res.data
-      console.log(this.dancers)
-      // this.dancers.forEach((d) => {
-      //   this.polyline.latlngs.push([d.lat, d.lng])
-      // })
+    })
+
+    // Inicializa la propiedad lastUpdateTime para cada bailarín
+    // this.dancers.forEach((dancer) => {
+    //   dancer.lastUpdateTime = new Date()
+    // })
+
+    // Llama a moveMarker para el primer bailarín
+    this.dancers.forEach((dancer) => {
+      if (dancer.position !== 0) {
+        this.moveMarker(dancer)
+      }
     })
   }
 }

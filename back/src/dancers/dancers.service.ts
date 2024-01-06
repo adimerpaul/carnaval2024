@@ -4,6 +4,7 @@ import { UpdateDancerDto } from './dto/update-dancer.dto';
 import {Dancer} from "./entities/dancer.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
+import * as fs from 'fs';
 
 @Injectable()
 export class DancersService {
@@ -16,7 +17,24 @@ export class DancersService {
   }
 
   async findAll() {
-    return await this.dancersRepository.find({order:{id:"ASC"}});
+    const dancers = await this.dancersRepository.find({ order: { id: 'ASC' } });
+
+    // Convierte la imagen a base64 y asigna la propiedad 'imageBase64'
+    for (const dancer of dancers) {
+      dancer.image = this.convertImageToBase64(dancer.image);
+    }
+
+    return dancers;
+  }
+
+  private convertImageToBase64(imagePath: string): string {
+    // Lee la imagen como un buffer
+    const imageBuffer = fs.readFileSync(`./uploads/${imagePath}`);
+
+    // Convierte el buffer a base64
+    const imageBase64 = imageBuffer.toString('base64');
+
+    return imageBase64;
   }
 
   findOne(id: number) {

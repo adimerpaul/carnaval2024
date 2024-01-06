@@ -10,9 +10,9 @@ export class Dancer {
     description: string;
     @Column({nullable: true,default: 'notFound.jpg'})
     image: string;
-    @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
+    @Column({type: 'decimal', precision: 10, scale: 2, nullable: true, default: 0})
     latitud: number;
-    @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
+    @Column({type: 'decimal', precision: 10, scale: 2, nullable: true, default: 0})
     longitud: number;
     @Column({nullable: true})
     positionSaturday: number;
@@ -20,6 +20,10 @@ export class Dancer {
     positionSunday: number;
     @Column({nullable: true})
     video: string;
+    @Column({type: 'decimal', precision: 10, scale: 2, nullable: true, default: 1})
+    velocity: number;
+    @Column({default: 0})
+    position: number
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
